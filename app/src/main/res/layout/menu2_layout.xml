@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <ListView
+        android:id="@+id/all_companies"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="@style/Base.TextAppearance.AppCompat.Display3"
+        android:background="@color/ripple_material_dark"
+        android:backgroundTint="#fd1f0f20"
+        android:textAlignment="@integer/abc_max_action_buttons"
+        android:theme="@style/Base.TextAppearance.AppCompat.Light.Widget.PopupMenu.Small"/>
+
+</FrameLayout>
