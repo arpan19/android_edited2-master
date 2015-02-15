@@ -34,6 +34,7 @@ import java.util.ArrayList;
  * Created by Arp on 2/8/2015.
  */
 public class menu2_Fragment extends Fragment {
+
     int i;
     String[] s1=new String[50];
     public static final String LOG_TAG = "MyApp";
@@ -247,6 +248,7 @@ int numDays=5;
         }
 
         }
+
     }
 
 
