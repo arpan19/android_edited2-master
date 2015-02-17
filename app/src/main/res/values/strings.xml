@@ -19,5 +19,6 @@
 <string name="title_activity_settings">settings</string>
     <string name="title_activity_detail">DetailActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="loadingtype">Loading</string>
 
 </resources>

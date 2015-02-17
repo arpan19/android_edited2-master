@@ -1,11 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textAppearance="?android:attr/textAppearanceLarge"
-    android:text="section2"
-    android:id="@+id/list_all_text"
-    android:layout_alignParentTop="true"
-    android:layout_centerHorizontal="true"
     android:gravity="center_vertical"
-    android:minHeight="?android:attr/listPreferredItemHeight"/>
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:padding="16dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:id="@+id/serial_number" />
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:id="@+id/company_name" />
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:id="@+id/date"
+              android:text=" - " />
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:id="@+id/eligibility_criteria" />
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:id="@+id/branch"
+              android:text=" - " />
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:id="@+id/salary" />
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:id="@+id/deadline"
+              android:text="/" />
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:id="@+id/other_info" />
+
+
+</LinearLayout>

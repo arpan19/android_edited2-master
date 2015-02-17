@@ -2,12 +2,15 @@ package com.example.arp.start;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,63 +18,70 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
+import com.example.arp.start.data.PatContract.PatEntry;
 
 /**
  * Created by Arp on 2/8/2015.
  */
-public class menu2_Fragment extends Fragment {
-
-    int i;
-    String[] s1=new String[50];
+public class menu2_Fragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>
+{
     public static final String LOG_TAG = "MyApp";
     View rootview;
-    private ArrayAdapter<String> checkingAdapter;
-    String[] s = new String[20];
-    public menu2_Fragment()
-    {
+    private  String mLocation;
+    private  static  final int FORECAST_LOADER=0;
+
+    private  static final String[] FORECAST_COLUMNS ={
+            PatEntry.TABLE_NAME+"."+PatEntry._ID,
+            PatEntry.COLUMN_SERIAL_NUMBER,
+            PatEntry.COLUMN_COMPANY_NAME,
+            PatEntry.COLUMN_DAT,
+            PatEntry.COLUMN_ELIGIBILITY_CRITERIA,
+            PatEntry.COLUMN_BRANCH,
+            PatEntry.COLUMN_SALARY,
+            PatEntry.COLUMN_DEADLINE,
+            PatEntry.COLUMN_OTHER_INFO
+    };
+
+
+    public menu2_Fragment() {
 
     }
     @Override
-    public void onCreate(Bundle savedInstanceState )
-    {
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(FORECAST_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
+
+    }
+    private SimpleCursorAdapter checkingAdapter;
+    String[] s = new String[20];
+
+
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }//for a refresh menu ,has a menu
 
 
     @Override
-    public  void onCreateOptionsMenu(Menu menu,MenuInflater inflater)
-    {
-        inflater.inflate(R.menu.refresh,menu);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.refresh, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
 
     {
-        int id= item.getItemId();
-        if(id == R.id.action_refresh)
-        {
-            FetchWeatherTask weatherTask = new FetchWeatherTask();
-            weatherTask.execute("94043");
+        int id = item.getItemId();
+        if (id == R.id.action_refresh) {
+
+            updateWeather();
             return true;
         }
-
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -81,53 +91,129 @@ public class menu2_Fragment extends Fragment {
 
       /*  String[] checkinglist = { "name-arpan","name-shreya","name-piyush"};
         List<String> checklist = new ArrayList<String>(Arrays.asList(checkinglist));*/
-      checkingAdapter = new ArrayAdapter<String>(
+        checkingAdapter = new SimpleCursorAdapter(
+
+
                 getActivity(),
                 R.layout.list_all,
-                R.id.list_all_text,
-                new ArrayList<String>());
-        rootview=inflater.inflate(R.layout.menu2_layout,container,false);
+                null,
+                new String[]{
+                        PatEntry.COLUMN_SERIAL_NUMBER,
+                        PatEntry.COLUMN_COMPANY_NAME,
+                        PatEntry.COLUMN_DAT,
+                        PatEntry.COLUMN_ELIGIBILITY_CRITERIA,
+                        PatEntry.COLUMN_BRANCH,
+                        PatEntry.COLUMN_SALARY,
+                        PatEntry.COLUMN_DEADLINE,
+                        PatEntry.COLUMN_OTHER_INFO
+
+                },
+                new int[]{R.id.serial_number,
+                        R.id.company_name,
+                        R.id.date,
+                        R.id.eligibility_criteria,
+                        R.id.branch,
+                        R.id.salary,
+                        R.id.deadline,
+                        R.id.other_info
+
+                },
+                0
+        );
+        rootview = inflater.inflate(R.layout.menu2_layout, container, false);
         ListView listView = (ListView) rootview.findViewById(R.id.all_companies);
         listView.setAdapter(checkingAdapter);
-listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        String forecast = checkingAdapter.getItem(position);
-        Intent intent=new Intent(getActivity(),DetailActivity.class).putExtra(Intent.EXTRA_TEXT,s1[position]);
-        startActivity(intent);
-    }
-});
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, "placeholder");
+                startActivity(intent);
+            }
+        });
+
         return rootview;
     }
 
+
+
+
     private void updateWeather() {
-        FetchWeatherTask weatherTask = new FetchWeatherTask();
-        SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String location=prefs.getString("","");
+        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = prefs.getString("", "");
 
         weatherTask.execute(location);
 
     }
+
     @Override
-    public  void onStart()
-    {
+
+    public void onStart() {
+
         super.onStart();
         updateWeather();
     }
 
 
-    public class  FetchWeatherTask extends AsyncTask<String,Void,String[] > {
 
-        private String[] getWeatherDataFromJson(String forecastJsonStr,int numDays)
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args)
+    {
+
+
+
+
+
+        Uri tableUri= PatEntry.CONTENT_URI;
+
+                       /*     String sortOrder = WeatherEntry.COLUMN_DATETEXT + " ASC";
+
+                    mLocation = Utility.getPreferredLocation(getActivity());
+           Uri weatherForLocationUri = WeatherEntry.buildWeatherLocationWithStartDate(
+                            mLocation, startDate); */
+
+        return new CursorLoader
+                (
+                        getActivity(),
+                        tableUri,
+                        FORECAST_COLUMNS,
+                        null,
+                        null,
+                        null
+                );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        checkingAdapter.swapCursor(data);
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        checkingAdapter.swapCursor(null);
+    }
+}
+
+
+  /*  public class  FetchWeatherTask extends AsyncTask<String,Void,String[] >
+  {
+
+
+        int numDays=5;
+        private String[] getWeatherDataFromJson(String forecastJsonStr)
                 throws JSONException {
             try
             {
 
                 JSONArray jarray = new JSONArray(forecastJsonStr);
                 int length = jarray.length();
-Log.v(LOG_TAG,"Getting data");
+                Log.v(LOG_TAG,"Getting data");
 
-                for (i = 0; i < length; i++) {
+                for (int i = 0; i < length; i++) {
                     JSONObject details = jarray.getJSONObject(i);
                     String serial_number= details.getString("serial_number");
                     String company_name= details.getString("company_name");
@@ -137,10 +223,9 @@ Log.v(LOG_TAG,"Getting data");
                     String salary= details.getString("salary");
                     String deadline= details.getString("deadline");
                     String other_info= details.getString("other_info");
-                    s[i]="\nCompany:\n"+company_name+"\nDate:\n"+dat+"\n";
+                    s[i]="serial_number"+serial_number+"company_name"+company_name+"dat"+dat+"eligibility_criteria"+eligibility_criteria+"branch"+branch+
+                            "salary"+salary+"deadline"+deadline+"other_info"+other_info;
                     Log.d("sample",s[i]);
-                    s1[i]="\n"+i+"\t"+serial_number+"\n\nCompany:\n"+company_name +"\n\nDate:\n"+dat +"\n\nEligibilty Criteria:\n"+eligibility_criteria+"\n\nBranch:\n"+branch+"\n\nDeadline:\n"+deadline+"\n\nOther Information:\n"+other_info+"\n";
-
 
                 }
 
@@ -148,10 +233,10 @@ Log.v(LOG_TAG,"Getting data");
             catch(Exception e){
                 Log.d(menu2_Fragment.LOG_TAG,"e1");
             }
-return s;
+                return s;
         }
 
-        @Override
+ /*       @Override
         protected String[] doInBackground(String... params)
         {
             if(params.length==0)
@@ -161,7 +246,7 @@ return s;
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             String forecastJsonStr = null;
-int numDays=5;
+
 
 
             try {
@@ -222,7 +307,7 @@ int numDays=5;
 
             }
             try {
-                return getWeatherDataFromJson(forecastJsonStr, numDays);
+                return getWeatherDataFromJson(forecastJsonStr);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -248,7 +333,6 @@ int numDays=5;
         }
 
         }
-
     }
 
-
+*/

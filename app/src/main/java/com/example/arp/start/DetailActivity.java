@@ -58,13 +58,15 @@ public class DetailActivity extends ActionBarActivity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,   Bundle savedInstanceState) {
-                                 Intent intent=getActivity().getIntent();
-        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-        if (intent!=null && intent.hasExtra(Intent.EXTRA_TEXT)){
-            String forecastStr = intent.getStringExtra(Intent.EXTRA_TEXT);
-            ((TextView)rootView.findViewById(R.id.detail_text)).setText(forecastStr);
-        }
-        return rootView;
+            Intent intent=getActivity().getIntent();
+            View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+            if (intent!=null && intent.hasExtra(Intent.EXTRA_TEXT)){
+                String forecastStr = intent.getStringExtra(Intent.EXTRA_TEXT);
+                ((TextView)rootView.findViewById(R.id.heading)).setText("COMPANY DETAILS");
+
+                ((TextView)rootView.findViewById(R.id.detail_text)).setText(forecastStr);
+            }
+            return rootView;
         }
     }
 }

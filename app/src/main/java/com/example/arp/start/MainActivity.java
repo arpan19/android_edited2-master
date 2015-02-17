@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+
     private EditText et;
     private String data;
     private String file = "mydata";
@@ -206,6 +207,6 @@ public class MainActivity extends ActionBarActivity
             ((MainActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
-    }
 
+    }
 }
